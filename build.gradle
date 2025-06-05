@@ -1,5 +1,5 @@
 plugins {
-    id 'com.android.application' version '7.4.2'
+    id 'com.android.application' version '8.7.3'
 }
 
 repositories {
@@ -12,6 +12,7 @@ repositories {
 
 android {
     compileSdkVersion 31
+    namespace 'itkach.aard2'
 
     packagingOptions {
         exclude 'META-INF/LICENSE'
