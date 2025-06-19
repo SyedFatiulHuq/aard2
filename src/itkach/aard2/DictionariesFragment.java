@@ -139,10 +139,39 @@ public class DictionariesFragment extends BaseListFragment {
                     selection.add(uri);
                 }
             }
+
+            int successCount = 0;
+            int failureCount = 0;
+
             for (Uri uri : selection) {
-                getActivity().getContentResolver().takePersistableUriPermission(uri,
-                        Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                app.addDictionary(uri);
+                try {
+                    getActivity().getContentResolver().takePersistableUriPermission(uri,
+                            Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                    app.addDictionary(uri);
+                    successCount++;
+                } catch (Exception e) {
+                    Log.e(TAG, "Failed to add dictionary: " + uri, e);
+                    failureCount++;
+                }
+            }
+
+            // Provide user feedback based on results
+            if (successCount > 0 && failureCount == 0) {
+                // All successful
+                String message = successCount == 1 ?
+                        "Dictionary added successfully" :
+                        successCount + " dictionaries added successfully";
+                Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+            } else if (successCount > 0 && failureCount > 0) {
+                // Mixed results
+                String message = successCount + " dictionaries added, " + failureCount + " failed";
+                Toast.makeText(getContext(), message, Toast.LENGTH_LONG).show();
+            } else if (failureCount > 0) {
+                // All failed
+                String message = failureCount == 1 ?
+                        "Failed to add dictionary" :
+                        "Failed to add " + failureCount + " dictionaries";
+                Toast.makeText(getContext(), message, Toast.LENGTH_LONG).show();
             }
         }
     }
