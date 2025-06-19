@@ -85,6 +85,14 @@ abstract class BlobDescriptorListFragment extends BaseListFragment {
                                 deleteSelectedItems();
                                 mode.finish();
                                 deleteConfirmationDialog = null;
+                                // Add generic toast message that works for both bookmarks and history
+                                String toastMessage;
+                                if (count == 1) {
+                                    toastMessage = "1 item deleted";
+                                } else {
+                                    toastMessage = count + " items deleted";
+                                }
+                                Toast.makeText(getActivity(), toastMessage, Toast.LENGTH_SHORT).show();
                             }
                         })
                         .setNegativeButton(android.R.string.no, null).create();
