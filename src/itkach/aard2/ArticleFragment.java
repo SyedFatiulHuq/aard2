@@ -19,6 +19,7 @@ import android.webkit.WebView;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 public class ArticleFragment extends Fragment {
@@ -67,9 +68,23 @@ public class ArticleFragment extends Fragment {
         if (value) {
             miBookmark.setChecked(true);
             miBookmark.setIcon(icBookmark);
+            miBookmark.setTitle("Remove bookmark");
+            miBookmark.setTitleCondensed("Remove bookmark");
+            // Update content description for accessibility
+            View actionView = miBookmark.getActionView();
+            if (actionView != null) {
+                actionView.setContentDescription("Remove bookmark");
+            }
         } else {
             miBookmark.setChecked(false);
             miBookmark.setIcon(icBookmarkO);
+            miBookmark.setTitle("Add bookmark");
+            miBookmark.setTitleCondensed("Add bookmark");
+            // Update content description for accessibility
+            View actionView = miBookmark.getActionView();
+            if (actionView != null) {
+                actionView.setContentDescription("Add bookmark");
+            }
         }
     }
 
@@ -80,15 +95,42 @@ public class ArticleFragment extends Fragment {
             view.showFindDialog(null, true);
             return true;
         }
+// Replace the bookmark handling section in onOptionsItemSelected with this:
         if (itemId == R.id.action_bookmark_article) {
             Application app = (Application)getActivity().getApplication();
             if (this.url != null) {
                 if (item.isChecked()) {
+                    // Remove bookmark
                     app.removeBookmark(this.url);
-                    displayBookmarked(false);
+                    // Show feedback toast first
+                    Toast.makeText(getActivity(), "Bookmark removed", Toast.LENGTH_SHORT).show();
+                    // Update UI after a short delay using view's postDelayed
+                    if (view != null) {
+                        view.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                displayBookmarked(false);
+                            }
+                        }, 1500); // 500ms delay
+                    } else {
+                        displayBookmarked(false);
+                    }
                 } else {
+                    // Add bookmark
                     app.addBookmark(this.url);
-                    displayBookmarked(true);
+                    // Show feedback toast first
+                    Toast.makeText(getActivity(), "Bookmark saved", Toast.LENGTH_SHORT).show();
+                    // Update UI after a short delay using view's postDelayed
+                    if (view != null) {
+                        view.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                displayBookmarked(true);
+                            }
+                        }, 1500); // 500ms delay
+                    } else {
+                        displayBookmarked(true);
+                    }
                 }
             }
             return true;
@@ -191,8 +233,16 @@ public class ArticleFragment extends Fragment {
         else {
             Application app = (Application)getActivity().getApplication();
             try {
-                boolean bookmarked =  app.isBookmarked(this.url);
+                boolean bookmarked = app.isBookmarked(this.url);
                 displayBookmarked(bookmarked);
+                // Set initial content description
+                if (bookmarked) {
+                    miBookmark.setTitle("Remove bookmark");
+                    miBookmark.setTitleCondensed("Remove bookmark");
+                } else {
+                    miBookmark.setTitle("Add bookmark");
+                    miBookmark.setTitleCondensed("Add bookmark");
+                }
             } catch (Exception ex) {
                 miBookmark.setVisible(false);
             }
