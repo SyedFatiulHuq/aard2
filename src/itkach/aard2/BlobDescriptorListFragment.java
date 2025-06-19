@@ -18,6 +18,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.SearchView;
+import android.widget.Toast;
 
 
 abstract class BlobDescriptorListFragment extends BaseListFragment {
@@ -238,20 +239,44 @@ abstract class BlobDescriptorListFragment extends BaseListFragment {
     public boolean onOptionsItemSelected(MenuItem mi) {
         BlobDescriptorList list = getDescriptorList();
         int itemId = mi.getItemId();
+
         if (itemId == R.id.action_sort_asc) {
-            list.setSort(!list.isAscending());
+            // Toggle ascending/descending
+            boolean wasAscending = list.isAscending();
+            list.setSort(!wasAscending);
             setAscending(mi, list.isAscending());
+
+            // Show informative toast feedback
+            String sortType = list.isAscending() ? "ascending" : "descending";
+            String message = "Changed to " + sortType + " order. Swipe right several times to see changes in the list.";
+            Toast.makeText(getActivity(), message, Toast.LENGTH_LONG).show();
+
             return true;
         }
+
         if (itemId == R.id.action_sort_order) {
+            // Toggle between time and title sorting
+            BlobDescriptorList.SortOrder newOrder;
+            String sortType;
+
             if (list.getSortOrder() == BlobDescriptorList.SortOrder.TIME) {
-                list.setSort(BlobDescriptorList.SortOrder.NAME);
+                newOrder = BlobDescriptorList.SortOrder.NAME;
+                sortType = "title";
             } else {
-                list.setSort(BlobDescriptorList.SortOrder.TIME);
+                newOrder = BlobDescriptorList.SortOrder.TIME;
+                sortType = "time";
             }
-            setSortOrder(mi, list.getSortOrder());
+
+            list.setSort(newOrder);
+            setSortOrder(mi, newOrder);
+
+            // Show informative toast feedback
+            String message = "Changed to sort by " + sortType + ". Swipe right several times to see changes in the list.";
+            Toast.makeText(getActivity(), message, Toast.LENGTH_LONG).show();
+
             return true;
         }
+
         return super.onOptionsItemSelected(mi);
     }
 
