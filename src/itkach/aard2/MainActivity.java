@@ -84,6 +84,7 @@ public class MainActivity extends FragmentActivity implements
             Tab tab = actionBar.newTab();
             tab.setTabListener(this);
             tab.setIcon(tabIcons[i]);
+            tab.setContentDescription(subtitles[i] + " tab");
             actionBar.addTab(tab);
         }
 
